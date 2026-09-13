@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Royal Invitation Studio — Wedding Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0f090b;
+      --panel-bg: #1a0f13;
+      --panel-border: rgba(223, 183, 88, 0.22);
+      --gold-primary: #dfb758;
+      --gold-glow: #ffeaa5;
+      --wine-accent: #5e0b21;
+      --wine-light: #801331;
+      --text-main: #f5ede4;
+      --text-muted: #a69197;
+      --input-bg: rgba(25, 12, 17, 0.7);
+      --input-border: rgba(223, 183, 88, 0.3);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Navigation Bar */
+    .top-bar {
+      height: 64px;
+      background: linear-gradient(90deg, #18090e 0%, #2b0c16 50%, #18090e 100%);
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-crown {
+      font-size: 24px;
+      color: var(--gold-primary);
+      filter: drop-shadow(0 0 10px rgba(223, 183, 88, 0.5));
+    }
+
+    .brand-title {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      font-size: 12.5px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(223, 183, 88, 0.25);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(223, 183, 88, 0.15);
+      border-color: var(--gold-primary);
+      color: #fff;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #dfb758 0%, #b38520 100%);
+      color: #1a080c;
+      box-shadow: 0 4px 15px rgba(223, 183, 88, 0.35);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #ffeaa5 0%, #dfb758 100%);
+      box-shadow: 0 6px 20px rgba(223, 183, 88, 0.55);
+      transform: translateY(-1px);
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #dfb758 0%, #b38520 100%);
+      color: #1a080c !important;
+      font-weight: 700;
+      box-shadow: 0 4px 18px rgba(223, 183, 88, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .btn-save:hover {
+      background: linear-gradient(135deg, #fff2be 0%, #dfb758 100%);
+      box-shadow: 0 6px 25px rgba(223, 183, 88, 0.7);
+      transform: translateY(-2px);
+    }
+
+    .panel-bottom-bar {
+      padding: 12px 18px;
+      background: rgba(18, 7, 11, 0.95);
+      border-top: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 20;
+    }
+
+    .save-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #2ecc71;
+      box-shadow: 0 0 10px rgba(46, 204, 113, 0.8);
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .status-dot.unsaved {
+      background: #e67e22;
+      box-shadow: 0 0 10px rgba(230, 126, 34, 0.8);
+    }
+
+    .status-dot.saving {
+      background: #3498db;
+      box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);
+    }
+
+    /* Main Workspace Layout */
+    .studio-workspace {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Left Studio Controls Panel */
+    .controls-panel {
+      width: 480px;
+      background: var(--panel-bg);
+      border-right: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      box-shadow: 10px 0 30px rgba(0,0,0,0.4);
+    }
+
+    .tabs-bar {
+      display: flex;
+      overflow-x: auto;
+      background: rgba(15, 6, 9, 0.9);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 6px 8px 0;
+      gap: 4px;
+      scrollbar-width: none;
+    }
+    .tabs-bar::-webkit-scrollbar { display: none; }
+
+    .tab-item {
+      padding: 10px 14px;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      border-bottom: none;
+      transition: all 0.2s ease;
+    }
+
+    .tab-item:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tab-item.active {
+      color: var(--gold-glow);
+      background: var(--panel-bg);
+      border-color: var(--panel-border);
+      border-bottom: 2px solid var(--gold-primary);
+    }
+
+    .tab-content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--wine-light) var(--panel-bg);
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      letter-spacing: 1.5px;
+      color: var(--gold-glow);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold-primary);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--gold-glow);
+      box-shadow: 0 0 10px rgba(223, 183, 88, 0.25);
+      background: rgba(36, 17, 24, 0.9);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 70px;
+      line-height: 1.5;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .file-dropzone {
+      border: 2px dashed var(--input-border);
+      background: rgba(223, 183, 88, 0.03);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .file-dropzone:hover {
+      border-color: var(--gold-primary);
+      background: rgba(223, 183, 88, 0.08);
+    }
+
+    .file-dropzone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .dropzone-icon {
+      font-size: 28px;
+      color: var(--gold-primary);
+      margin-bottom: 6px;
+    }
+
+    .dropzone-label {
+      font-size: 12px;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .dropzone-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .image-preview-thumb {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--panel-border);
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* Preset Themes Grid */
+    .themes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .theme-card {
+      border: 1.5px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 12px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .theme-card:hover, .theme-card.active {
+      border-color: var(--gold-primary);
+      background: rgba(223, 183, 88, 0.1);
+      box-shadow: 0 4px 14px rgba(223, 183, 88, 0.2);
+    }
+
+    .theme-preview-strip {
+      height: 16px;
+      border-radius: 4px;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .theme-name {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+    }
+
+    /* Right Preview Stage */
+    .preview-stage {
+      flex: 1;
+      background: radial-gradient(circle at 50% 50%, #200a12 0%, #0c0406 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .preview-toolbar {
+      position: absolute;
+      top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(20, 8, 13, 0.85);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(10px);
+      padding: 6px 14px;
+      border-radius: 30px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      z-index: 20;
+    }
+
+    .tool-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .tool-btn:hover, .tool-btn.active {
+      color: var(--gold-glow);
+      background: rgba(223, 183, 88, 0.15);
+    }
+
+    .tool-sep {
+      width: 1px;
+      height: 16px;
+      background: var(--panel-border);
+    }
+
+    /* Simulated Smartphone Frame */
+    .device-mockup {
+      width: 440px;
+      height: 86vh;
+      max-height: 880px;
+      background: #000;
+      border-radius: 46px;
+      border: 10px solid #2a2327;
+      box-shadow: 
+        0 0 0 2px #4d3d44,
+        0 30px 90px rgba(0,0,0,0.85),
+        0 0 50px rgba(223, 183, 88, 0.15);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.3s ease;
+    }
+
+    .device-speaker-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130px;
+      height: 24px;
+      background: #2a2327;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .camera-dot {
+      width: 8px;
+      height: 8px;
+      background: #0d0608;
+      border-radius: 50%;
+      border: 1px solid #44373d;
+    }
+
+    .preview-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #0c0104;
+    }
+
+    /* Toast Notification */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: linear-gradient(135deg, #2b0b14, #120206);
+      border: 1px solid var(--gold-primary);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 1000;
+    }
+
+    .toast-msg.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .studio-workspace {
+        flex-direction: column;
+      }
+      .controls-panel {
+        width: 100%;
+        height: 50%;
+        border-right: none;
+        border-bottom: 1px solid var(--panel-border);
+      }
+      .preview-stage {
+        height: 50%;
+      }
+      .device-mockup {
+        height: 90%;
+        width: 380px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-bar">
+    <div class="brand-group">
+      <div class="brand-crown">👑</div>
+      <div>
+        <div class="brand-title">Royal Invitation Studio</div>
+        <div class="brand-sub">Live Wedding Invitation Editor</div>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <button class="btn btn-secondary" id="btnResetDefaults" title="Reset all fields to original values">
+        ↺ Reset
+      </button>
+      <a href="index.html" target="_blank" class="btn btn-secondary" title="View Invitation directly">
+        👁️ Open Live Site
+      </a>
+      <button class="btn btn-save" id="btnSaveChanges" title="Save changes directly to index.html (Ctrl+S)">
+        💾 Save Changes
+      </button>
+      <button class="btn btn-secondary" id="btnExportHtml" title="Export compiled standalone index.html">
+        ⬇️ Download HTML
+      </button>
+    </div>
+  </header>
+
+  <!-- Studio Workspace -->
+  <main class="studio-workspace">
+    <!-- Left Controls Panel -->
+    <aside class="controls-panel">
+      <!-- Tabs -->
+      <nav class="tabs-bar">
+        <div class="tab-item active" data-tab="tab-couple">💍 Couple</div>
+        <div class="tab-item" data-tab="tab-event">📅 Muhurtham</div>
+        <div class="tab-item" data-tab="tab-venue">📍 Venue & Map</div>
+        <div class="tab-item" data-tab="tab-words">📜 Blessings</div>
+        <div class="tab-item" data-tab="tab-family">👨‍👩‍👧 Family</div>
+        <div class="tab-item" data-tab="tab-media">🖼️ Photos & Music</div>
+        <div class="tab-item" data-tab="tab-themes">🎨 Themes</div>
+      </nav>
+
+      <!-- Scrollable Tab Content Area -->
+      <div class="tab-content-area">
+
+        <!-- 1. Couple Details Tab -->
+        <div class="tab-pane active" id="tab-couple">
+          <div class="section-title">💍 Couple Information</div>
+          <p class="section-desc">Customize the names, degrees, occupations, and royal monogram.</p>
+
+          <div class="form-group">
+            <label class="form-label">Monogram Initials</label>
+            <input type="text" class="form-input" id="inpMonogram" value="P&S" maxlength="6" />
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--panel-border); margin: 18px 0;" />
+
+          <div class="form-group">
+            <label class="form-label">Groom's Name</label>
+            <input type="text" class="form-input" id="inpGroomName" value="K. Praveen Kumar" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Degree / Title</label>
+              <input type="text" class="form-input" id="inpGroomDegree" value="M.E., (CSE)" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Profession / College</label>
+              <input type="text" class="form-input" id="inpGroomJob" value="Asst. Prof, Sri Krishna College, Coimbatore" />
+            </div>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--panel-border); margin: 18px 0;" />
+
+          <div class="form-group">
+            <label class="form-label">Bride's Name</label>
+            <input type="text" class="form-input" id="inpBrideName" value="B. Shalini" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Degree / Title</label>
+              <input type="text" class="form-input" id="inpBrideDegree" value="B.E., (CSE)" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Profession / Company</label>
+              <input type="text" class="form-input" id="inpBrideJob" value="Cognizant Technology Solutions, Coimbatore" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Photo Frame Caption</label>
+            <input type="text" class="form-input" id="inpCoupleCaption" value="Praveen Kumar & Shalini" />
+          </div>
+        </div>
+
+        <!-- 2. Date & Muhurtham Tab -->
+        <div class="tab-pane" id="tab-event">
+          <div class="section-title">📅 Date, Time & Countdown</div>
+          <p class="section-desc">Configure the auspicious Subamuhurtham and countdown clock target.</p>
+
+          <div class="form-group">
+            <label class="form-label">Wedding Date Display (Hero)</label>
+            <input type="text" class="form-input" id="inpDateHero" value="17 SEPTEMBER 2026 • COIMBATORE" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Envelope Date Badge</label>
+            <input type="text" class="form-input" id="inpDateBadge" value="17 • 09 • 2026" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Target Timestamp for Live Countdown</label>
+            <input type="datetime-local" class="form-input" id="inpCountdownTarget" value="2026-09-17T07:00" />
+            <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: block;">The countdown timer recalculates immediately based on this date.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Countdown Subtitle Display</label>
+            <input type="text" class="form-input" id="inpCountdownSubtitle" value="Thursday, 17th September 2026 • 07:00 AM" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Event Header Card Date</label>
+            <input type="text" class="form-input" id="inpEventDateFull" value="Thursday, 17th September 2026" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Timings Breakdown (HTML allowed)</label>
+            <textarea class="form-textarea" id="inpEventTimings"><strong>Reception:</strong> 7:00 AM – 10:00 AM<br><strong>Subamuhurtham:</strong> 8:00 AM – 9:00 AM</textarea>
+          </div>
+        </div>
+
+        <!-- 3. Venue & Maps Tab -->
+        <div class="tab-pane" id="tab-venue">
+          <div class="section-title">📍 Venue & Location</div>
+          <p class="section-desc">Set the marriage hall address and Google Maps navigation link.</p>
+
+          <div class="form-group">
+            <label class="form-label">Venue Hall Name</label>
+            <input type="text" class="form-input" id="inpVenueName" value="Sree Vivaahaa Mahal" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Venue Address Line</label>
+            <input type="text" class="form-input" id="inpVenueAddress" value="L&T Bypass, Trichy Road, Ondipudur, Coimbatore." />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Google Maps URL</label>
+            <input type="text" class="form-input" id="inpVenueMapsUrl" value="https://www.google.com/maps/search/?api=1&query=Sree+Vivaahaa+Mahal+LT+Bypass+Trichy+Road+Ondipudur+Coimbatore" />
+          </div>
+        </div>
+
+        <!-- 4. Words & Blessings Tab -->
+        <div class="tab-pane" id="tab-words">
+          <div class="section-title">📜 Quotes & Blessings</div>
+          <p class="section-desc">Edit traditional Thirukkural or romantic quote and invitation message.</p>
+
+          <div class="form-group">
+            <label class="form-label">Auspicious Verse / Thirukkural</label>
+            <textarea class="form-textarea" id="inpKuralQuote">"அன்பும் அறனும் உடைத்தாயின் இல்வாழ்க்கை&#10;பண்பும் பயனும் அது"</textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Subamuhurtham Invitation Text</label>
+            <textarea class="form-textarea" style="min-height: 110px;" id="inpInvitationBody">With the divine blessings of the Almighty and our parents, we cordially invite you and your family to grace the auspicious wedding ceremony and bless the couple as they begin their sacred journey together.</textarea>
+          </div>
+        </div>
+
+        <!-- 5. Family Greetings Tab -->
+        <div class="tab-pane" id="tab-family">
+          <div class="section-title">👨‍👩‍👧 Family Greetings</div>
+          <p class="section-desc">Update the names and hometowns of Groom's and Bride's parents.</p>
+
+          <div class="form-group">
+            <label class="form-label">Groom's Parents Names</label>
+            <input type="text" class="form-input" id="inpGroomParents" value="Mr. J. Kumaravel & Mrs. K. Tamilselvi" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Groom's Family Address / City</label>
+            <input type="text" class="form-input" id="inpGroomParentsAddr" value="Nethaji Avenue, LIC Colony, Coimbatore" />
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--panel-border); margin: 18px 0;" />
+
+          <div class="form-group">
+            <label class="form-label">Bride's Parents Names</label>
+            <input type="text" class="form-input" id="inpBrideParents" value="Mr. K. Balasubramaniam & Mrs. B. Vijayalakshmi" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bride's Family Address / City</label>
+            <input type="text" class="form-input" id="inpBrideParentsAddr" value="Vidhyalayam, Palladam Road, Tirupur" />
+          </div>
+        </div>
+
+        <!-- 6. Photos & Music Tab -->
+        <div class="tab-pane" id="tab-media">
+          <div class="section-title">🖼️ Media & Background Music</div>
+          <p class="section-desc">Upload custom wedding portraits or choose your own music.</p>
+
+          <div class="form-group">
+            <label class="form-label">Royal Frame Couple Photo</label>
+            <div class="file-dropzone">
+              <input type="file" id="fileCouplePhoto" accept="image/*" />
+              <div class="dropzone-icon">📸</div>
+              <div class="dropzone-label">Click or Drag & Drop Couple Photo</div>
+              <div class="dropzone-hint">Supports PNG, JPG, WEBP (Instant preview)</div>
+            </div>
+            <img id="thumbCouplePhoto" class="image-preview-thumb" src="wedding.jpeg" style="display: block;" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Hero Banner Photo</label>
+            <div class="file-dropzone">
+              <input type="file" id="fileBannerPhoto" accept="image/*" />
+              <div class="dropzone-icon">🌄</div>
+              <div class="dropzone-label">Click or Drag & Drop Banner Photo</div>
+              <div class="dropzone-hint">Background photo displayed behind hero title</div>
+            </div>
+            <img id="thumbBannerPhoto" class="image-preview-thumb" src="reception.jpeg" style="display: block;" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Background Audio Track URL or Local Path</label>
+            <input type="text" class="form-input" id="inpAudioSource" value="bgmusic.mp3" />
+            <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: block;">Default: bgmusic.mp3 (Local track included)</span>
+          </div>
+        </div>
+
+        <!-- 7. Theme Presets Tab -->
+        <div class="tab-pane" id="tab-themes">
+          <div class="section-title">🎨 Royal Color Schemes</div>
+          <p class="section-desc">Select from curated regal palettes tailored for auspicious celebrations.</p>
+
+          <div class="themes-grid">
+            <div class="theme-card active" data-theme="burgundy">
+              <div class="theme-preview-strip" style="background: linear-gradient(90deg, #470618 0%, #210209 50%, #dfb758 100%);"></div>
+              <div class="theme-name">Royal Burgundy (Default)</div>
+            </div>
+
+            <div class="theme-card" data-theme="emerald">
+              <div class="theme-preview-strip" style="background: linear-gradient(90deg, #093021 0%, #03140e 50%, #dfb758 100%);"></div>
+              <div class="theme-name">Sacred Emerald</div>
+            </div>
+
+            <div class="theme-card" data-theme="sapphire">
+              <div class="theme-preview-strip" style="background: linear-gradient(90deg, #0b1933 0%, #040a17 50%, #dfb758 100%);"></div>
+              <div class="theme-name">Midnight Sapphire</div>
+            </div>
+
+            <div class="theme-card" data-theme="plum">
+              <div class="theme-preview-strip" style="background: linear-gradient(90deg, #330836 0%, #150217 50%, #e6a77e 100%);"></div>
+              <div class="theme-name">Imperial Plum & Rose</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sticky Bottom Save Bar -->
+      <div class="panel-bottom-bar">
+        <div class="save-status">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="saveStatusText">All changes saved</span>
+        </div>
+        <button class="btn btn-save" id="btnSaveChangesBottom" title="Save changes directly to index.html (Ctrl+S)">
+          💾 Save Changes
+        </button>
+      </div>
+    </aside>
+
+    <!-- Right Preview Stage -->
+    <section class="preview-stage">
+      <!-- Floating Toolbar -->
+      <div class="preview-toolbar">
+        <button class="tool-btn" id="btnResealEnvelope" title="Re-seal and animate envelope opening again">
+          💌 Re-seal Envelope
+        </button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" id="btnPreviewAudio" title="Play or pause audio in preview">
+          🎵 Toggle Music
+        </button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn active" id="btnViewMobile" title="Mobile phone view (440px)">
+          📱 440px
+        </button>
+        <button class="tool-btn" id="btnViewCompact" title="Compact view (375px)">
+          📱 375px
+        </button>
+      </div>
+
+      <!-- Smartphone Device Mockup -->
+      <div class="device-mockup" id="deviceMockup">
+        <div class="device-speaker-notch">
+          <div class="camera-dot"></div>
+        </div>
+        <iframe id="invitationFrame" class="preview-iframe" src="index.html"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast-msg" id="toastMsg">
+    <span id="toastIcon">✨</span>
+    <span id="toastText">Changes synced in real-time</span>
+  </div>
+
+  <script>
+    // Tab Switching Logic
+    const tabItems = document.querySelectorAll('.tab-item');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabItems.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabItems.forEach(t => t.classList.remove('active'));
+        tabPanes.forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        const target = document.getElementById(tab.dataset.tab);
+        if (target) target.classList.add('active');
+      });
+    });
+
+    // Theme Palettes
+    const THEMES = {
+      burgundy: {
+        '--deep-wine': '#210209',
+        '--envelope-burgundy': '#470618',
+        '--gold-primary': '#dfb758',
+        '--gold-glow': '#ffeaa5',
+        '--maroon-accent': '#6b0c26',
+        '--envelope-grad-start': '#6a0d28',
+        '--envelope-grad-end': '#3a0312'
+      },
+      emerald: {
+        '--deep-wine': '#041710',
+        '--envelope-burgundy': '#0a3625',
+        '--gold-primary': '#e0b753',
+        '--gold-glow': '#fff0b8',
+        '--maroon-accent': '#0c4731',
+        '--envelope-grad-start': '#0f4f37',
+        '--envelope-grad-end': '#062419'
+      },
+      sapphire: {
+        '--deep-wine': '#050c1c',
+        '--envelope-burgundy': '#0e234a',
+        '--gold-primary': '#dfb758',
+        '--gold-glow': '#ffeaa5',
+        '--maroon-accent': '#14356e',
+        '--envelope-grad-start': '#193f82',
+        '--envelope-grad-end': '#091936'
+      },
+      plum: {
+        '--deep-wine': '#1f0424',
+        '--envelope-burgundy': '#450b50',
+        '--gold-primary': '#e8a978',
+        '--gold-glow': '#ffd7ba',
+        '--maroon-accent': '#630e73',
+        '--envelope-grad-start': '#6b117c',
+        '--envelope-grad-end': '#31063a'
+      }
+    };
+
+    let currentTheme = 'burgundy';
+    let couplePhotoDataUrl = null;
+    let bannerPhotoDataUrl = null;
+    let isInitialized = false;
+    let hasUnsavedChanges = false;
+
+    const frame = document.getElementById('invitationFrame');
+    const toast = document.getElementById('toastMsg');
+    const toastText = document.getElementById('toastText');
+
+    function markUnsaved() {
+      if (!isInitialized) return;
+      hasUnsavedChanges = true;
+      const dot = document.getElementById('statusDot');
+      const txt = document.getElementById('saveStatusText');
+      if (dot) dot.className = 'status-dot unsaved';
+      if (txt) txt.innerText = 'Unsaved changes...';
+    }
+
+    function markSaved(msg = 'All changes saved') {
+      hasUnsavedChanges = false;
+      const dot = document.getElementById('statusDot');
+      const txt = document.getElementById('saveStatusText');
+      if (dot) dot.className = 'status-dot';
+      if (txt) {
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        txt.innerText = `${msg} (${timeStr})`;
+      }
+    }
+
+    function showToast(msg, icon = '✨') {
+      document.getElementById('toastIcon').innerText = icon;
+      toastText.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); }, 2400);
+    }
+
+    // Get current form data object
+    function getFormData() {
+      return {
+        monogram: document.getElementById('inpMonogram').value.trim(),
+        groomName: document.getElementById('inpGroomName').value.trim(),
+        groomDegree: document.getElementById('inpGroomDegree').value.trim(),
+        groomJob: document.getElementById('inpGroomJob').value.trim(),
+        brideName: document.getElementById('inpBrideName').value.trim(),
+        brideDegree: document.getElementById('inpBrideDegree').value.trim(),
+        brideJob: document.getElementById('inpBrideJob').value.trim(),
+        coupleCaption: document.getElementById('inpCoupleCaption').value.trim(),
+        dateHero: document.getElementById('inpDateHero').value.trim(),
+        dateBadge: document.getElementById('inpDateBadge').value.trim(),
+        countdownTarget: document.getElementById('inpCountdownTarget').value,
+        countdownSubtitle: document.getElementById('inpCountdownSubtitle').value.trim(),
+        eventDateFull: document.getElementById('inpEventDateFull').value.trim(),
+        eventTimings: document.getElementById('inpEventTimings').value.trim(),
+        venueName: document.getElementById('inpVenueName').value.trim(),
+        venueAddress: document.getElementById('inpVenueAddress').value.trim(),
+        venueMapsUrl: document.getElementById('inpVenueMapsUrl').value.trim(),
+        kuralQuote: document.getElementById('inpKuralQuote').value.trim(),
+        invitationBody: document.getElementById('inpInvitationBody').value.trim(),
+        groomParents: document.getElementById('inpGroomParents').value.trim(),
+        groomParentsAddr: document.getElementById('inpGroomParentsAddr').value.trim(),
+        brideParents: document.getElementById('inpBrideParents').value.trim(),
+        brideParentsAddr: document.getElementById('inpBrideParentsAddr').value.trim(),
+        audioSource: document.getElementById('inpAudioSource').value.trim(),
+        theme: currentTheme,
+        couplePhoto: couplePhotoDataUrl,
+        bannerPhoto: bannerPhotoDataUrl
+      };
+    }
+
+    // Save to LocalStorage
+    function saveDraft() {
+      try {
+        const data = getFormData();
+        localStorage.setItem('wedding_invitation_studio_data', JSON.stringify(data));
+      } catch (e) {
+        // Handle potential quota exceeded if huge base64
+      }
+    }
+
+    // Load from LocalStorage if exists
+    function loadDraft() {
+      try {
+        const saved = localStorage.getItem('wedding_invitation_studio_data');
+        if (!saved) return;
+        const data = JSON.parse(saved);
+        if (data.monogram) document.getElementById('inpMonogram').value = data.monogram;
+        if (data.groomName) document.getElementById('inpGroomName').value = data.groomName;
+        if (data.groomDegree) document.getElementById('inpGroomDegree').value = data.groomDegree;
+        if (data.groomJob) document.getElementById('inpGroomJob').value = data.groomJob;
+        if (data.brideName) document.getElementById('inpBrideName').value = data.brideName;
+        if (data.brideDegree) document.getElementById('inpBrideDegree').value = data.brideDegree;
+        if (data.brideJob) document.getElementById('inpBrideJob').value = data.brideJob;
+        if (data.coupleCaption) document.getElementById('inpCoupleCaption').value = data.coupleCaption;
+        if (data.dateHero) document.getElementById('inpDateHero').value = data.dateHero;
+        if (data.dateBadge) document.getElementById('inpDateBadge').value = data.dateBadge;
+        if (data.countdownTarget) document.getElementById('inpCountdownTarget').value = data.countdownTarget;
+        if (data.countdownSubtitle) document.getElementById('inpCountdownSubtitle').value = data.countdownSubtitle;
+        if (data.eventDateFull) document.getElementById('inpEventDateFull').value = data.eventDateFull;
+        if (data.eventTimings) document.getElementById('inpEventTimings').value = data.eventTimings;
+        if (data.venueName) document.getElementById('inpVenueName').value = data.venueName;
+        if (data.venueAddress) document.getElementById('inpVenueAddress').value = data.venueAddress;
+        if (data.venueMapsUrl) document.getElementById('inpVenueMapsUrl').value = data.venueMapsUrl;
+        if (data.kuralQuote) document.getElementById('inpKuralQuote').value = data.kuralQuote;
+        if (data.invitationBody) document.getElementById('inpInvitationBody').value = data.invitationBody;
+        if (data.groomParents) document.getElementById('inpGroomParents').value = data.groomParents;
+        if (data.groomParentsAddr) document.getElementById('inpGroomParentsAddr').value = data.groomParentsAddr;
+        if (data.brideParents) document.getElementById('inpBrideParents').value = data.brideParents;
+        if (data.brideParentsAddr) document.getElementById('inpBrideParentsAddr').value = data.brideParentsAddr;
+        if (data.audioSource) document.getElementById('inpAudioSource').value = data.audioSource;
+        if (data.theme) {
+          currentTheme = data.theme;
+          document.querySelectorAll('.theme-card').forEach(c => {
+            c.classList.toggle('active', c.dataset.theme === currentTheme);
+          });
+        }
+        if (data.couplePhoto) {
+          couplePhotoDataUrl = data.couplePhoto;
+          document.getElementById('thumbCouplePhoto').src = couplePhotoDataUrl;
+        }
+        if (data.bannerPhoto) {
+          bannerPhotoDataUrl = data.bannerPhoto;
+          document.getElementById('thumbBannerPhoto').src = bannerPhotoDataUrl;
+        }
+      } catch (e) {
+        console.warn('Error loading draft', e);
+      }
+    }
+
+    // Apply Real-time changes to the iframe preview
+    function syncPreview() {
+      const data = getFormData();
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      if (!doc) return;
+
+      // Update Monograms
+      const initials = doc.querySelector('.sliding-card .monogram-initials');
+      if (initials) initials.innerText = data.monogram;
+      const coinMonogram = doc.querySelector('.seal-inner-coin .monogram-text');
+      if (coinMonogram) coinMonogram.innerText = data.monogram;
+
+      // Update Names & Titles
+      const personNames = doc.querySelectorAll('.hero-banner .person-name');
+      const designations = doc.querySelectorAll('.hero-banner .designation');
+      const institutions = doc.querySelectorAll('.hero-banner .institution');
+      if (personNames.length >= 2) {
+        personNames[0].innerText = data.groomName;
+        personNames[1].innerText = data.brideName;
+      }
+      if (designations.length >= 2) {
+        designations[0].innerText = data.groomDegree;
+        designations[1].innerText = data.brideDegree;
+      }
+      if (institutions.length >= 2) {
+        institutions[0].innerText = data.groomJob;
+        institutions[1].innerText = data.brideJob;
+      }
+
+      // Hero date
+      const heroDate = doc.querySelector('.hero-banner > p:last-child');
+      if (heroDate) heroDate.innerText = data.dateHero;
+
+      // Envelope date preview
+      const cardDate = doc.querySelector('.card-date-preview');
+      if (cardDate) cardDate.innerText = data.dateBadge;
+
+      // Couple Photo & Caption
+      const coupleImg = doc.querySelector('.wedding-crop-img');
+      if (coupleImg && data.couplePhoto) {
+        coupleImg.src = data.couplePhoto;
+      }
+      const caption = doc.querySelector('.photo-caption');
+      if (caption) caption.innerText = data.coupleCaption;
+
+      // Hero Banner Background
+      const heroBanner = doc.querySelector('.hero-banner');
+      if (heroBanner && data.bannerPhoto) {
+        heroBanner.style.backgroundImage = `linear-gradient(180deg, rgba(8, 29, 24, 0.45) 0%, rgba(8, 29, 24, 0.98) 100%), url('${data.bannerPhoto}')`;
+      }
+
+      // Kural Quote & Invitation Body
+      const kuralEl = doc.querySelector('.kural-quote');
+      if (kuralEl) kuralEl.innerHTML = data.kuralQuote.replace(/\n/g, '<br>');
+
+      const bodyEl = doc.querySelector('.invitation-body');
+      if (bodyEl) bodyEl.innerText = data.invitationBody;
+
+      // Countdown Date Sub
+      const cdSub = doc.querySelector('.countdown-date-sub');
+      if (cdSub) cdSub.innerText = data.countdownSubtitle;
+
+      // Event Card
+      const eventRows = doc.querySelectorAll('.event-card .event-row');
+      if (eventRows.length >= 3) {
+        // Date
+        const dateSpan = eventRows[0].querySelector('span:last-child strong');
+        if (dateSpan) dateSpan.innerText = data.eventDateFull;
+
+        // Timings
+        const timeSpan = eventRows[1].querySelector('span:last-child');
+        if (timeSpan) timeSpan.innerHTML = data.eventTimings;
+
+        // Venue Address
+        const venueSpan = eventRows[2].querySelector('span:last-child');
+        if (venueSpan) {
+          venueSpan.innerHTML = `<strong>${data.venueName}</strong><br>${data.venueAddress}`;
+        }
+      }
+
+      // Map Button
+      const mapLink = doc.querySelector('.map-link-btn');
+      if (mapLink) mapLink.href = data.venueMapsUrl;
+
+      // Family columns
+      const familyCols = doc.querySelectorAll('.family-column');
+      if (familyCols.length >= 2) {
+        familyCols[0].innerHTML = `<strong>Groom's Parents:</strong><br>${data.groomParents}<br><span style="font-size: 11px; color: #777;">${data.groomParentsAddr}</span>`;
+        familyCols[1].innerHTML = `<strong>Bride's Parents:</strong><br>${data.brideParents}<br><span style="font-size: 11px; color: #777;">${data.brideParentsAddr}</span>`;
+      }
+
+      // Countdown live target update in iframe window context
+      if (frame.contentWindow && data.countdownTarget) {
+        const targetMs = new Date(data.countdownTarget).getTime();
+        if (!isNaN(targetMs)) {
+          frame.contentWindow.muhurthamTarget = targetMs;
+        }
+      }
+
+      // Update Theme CSS Variables
+      const themeVars = THEMES[data.theme] || THEMES.burgundy;
+      const rootStyle = doc.documentElement.style;
+      for (const [key, val] of Object.entries(themeVars)) {
+        rootStyle.setProperty(key, val);
+      }
+
+      saveDraft();
+    }
+
+    // Attach real-time input listeners
+    const inputIds = [
+      'inpMonogram', 'inpGroomName', 'inpGroomDegree', 'inpGroomJob',
+      'inpBrideName', 'inpBrideDegree', 'inpBrideJob', 'inpCoupleCaption',
+      'inpDateHero', 'inpDateBadge', 'inpCountdownTarget', 'inpCountdownSubtitle',
+      'inpEventDateFull', 'inpEventTimings', 'inpVenueName', 'inpVenueAddress',
+      'inpVenueMapsUrl', 'inpKuralQuote', 'inpInvitationBody', 'inpGroomParents',
+      'inpGroomParentsAddr', 'inpBrideParents', 'inpBrideParentsAddr', 'inpAudioSource'
+    ];
+
+    inputIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => {
+          syncPreview();
+        });
+      }
+    });
+
+    // Theme selector
+    document.querySelectorAll('.theme-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        currentTheme = card.dataset.theme;
+        syncPreview();
+        showToast(`Applied ${card.querySelector('.theme-name').innerText} theme`);
+      });
+    });
+
+    // Couple photo upload handler
+    document.getElementById('fileCouplePhoto').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          couplePhotoDataUrl = event.target.result;
+          const thumb = document.getElementById('thumbCouplePhoto');
+          thumb.src = couplePhotoDataUrl;
+          thumb.style.display = 'block';
+          syncPreview();
+          showToast('Couple photo updated!', '📸');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Banner photo upload handler
+    document.getElementById('fileBannerPhoto').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          bannerPhotoDataUrl = event.target.result;
+          const thumb = document.getElementById('thumbBannerPhoto');
+          thumb.src = bannerPhotoDataUrl;
+          thumb.style.display = 'block';
+          syncPreview();
+          showToast('Hero banner updated!', '🌄');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Re-seal envelope button
+    document.getElementById('btnResealEnvelope').addEventListener('click', () => {
+      frame.src = frame.src; // Reload iframe to reset animation stage
+      frame.onload = () => {
+        syncPreview();
+        showToast('Envelope re-sealed! Click the wax seal to open.', '💌');
+      };
+    });
+
+    // Audio toggle in preview
+    document.getElementById('btnPreviewAudio').addEventListener('click', () => {
+      const doc = frame.contentDocument;
+      if (doc) {
+        const musicBtn = doc.getElementById('musicToggle');
+        if (musicBtn) musicBtn.click();
+      }
+    });
+
+    // Device width toggles
+    const mockup = document.getElementById('deviceMockup');
+    const btnMobile = document.getElementById('btnViewMobile');
+    const btnCompact = document.getElementById('btnViewCompact');
+
+    btnMobile.addEventListener('click', () => {
+      btnMobile.classList.add('active');
+      btnCompact.classList.remove('active');
+      mockup.style.width = '440px';
+    });
+
+    btnCompact.addEventListener('click', () => {
+      btnCompact.classList.add('active');
+      btnMobile.classList.remove('active');
+      mockup.style.width = '375px';
+    });
+
+    // Reset Defaults
+    document.getElementById('btnResetDefaults').addEventListener('click', () => {
+      if (confirm('Are you sure you want to reset all customized values to the original invitation?')) {
+        localStorage.removeItem('wedding_invitation_studio_data');
+        location.reload();
+      }
+    });
+
+    // Unified HTML Generator
+    async function generateUpdatedHtml(data) {
+      // Fetch current template index.html
+      const res = await fetch('index.html');
+      let html = await res.text();
+
+      // 1. Replace Monograms
+      html = html.replace(/(<span class="monogram-initials">).*?(<\/span>)/g, `$1${data.monogram}$2`);
+      html = html.replace(/(<span class="monogram-text">).*?(<\/span>)/g, `$1${data.monogram}$2`);
+
+      // 2. Replace Names, Degrees, Occupations
+      html = html.replace(/(<h1 class="person-name">).*?(<\/h1>[\s\S]*?<p class="designation">).*?(<\/p>[\s\S]*?<p class="institution">).*?(<\/p>[\s\S]*?<div class="ampersand">[\s\S]*?<h1 class="person-name">).*?(<\/h1>[\s\S]*?<p class="designation">).*?(<\/p>[\s\S]*?<p class="institution">).*?(<\/p>)/, 
+        `$1${data.groomName}$2${data.groomDegree}$3${data.groomJob}$4${data.brideName}$5${data.brideDegree}$6${data.brideJob}$7`
+      );
+
+      // 3. Photo Caption
+      html = html.replace(/(<div class="photo-caption">).*?(<\/div>)/, `$1${data.coupleCaption}$2`);
+
+      // 4. Hero Date & Badge Date
+      html = html.replace(/(\d{1,2}\s+[A-Z]+\s+\d{4}\s+•\s+COIMBATORE)/, data.dateHero);
+      html = html.replace(/(<div class="card-date-preview">).*?(<\/div>)/, `$1${data.dateBadge}$2`);
+
+      // 5. Kural Quote & Invitation text
+      html = html.replace(/(<p class="kural-quote reveal-on-scroll">).*?(<\/p>)/s, 
+        `$1${data.kuralQuote.replace(/\n/g, '<br>')}$2`
+      );
+      html = html.replace(/(<p class="invitation-body reveal-on-scroll">).*?(<\/p>)/s, 
+        `$1\n        ${data.invitationBody}\n      $2`
+      );
+
+      // 6. Countdown Subtitle & Target
+      html = html.replace(/(<div class="countdown-date-sub">).*?(<\/div>)/, `$1${data.countdownSubtitle}$2`);
+      const isoTarget = data.countdownTarget ? `${data.countdownTarget}:00+05:30` : `2026-09-17T07:00:00+05:30`;
+      html = html.replace(/const muhurthamTarget = new Date\(.*?\)\.getTime\(\);/, 
+        `const muhurthamTarget = new Date("${isoTarget}").getTime();`
+      );
+      html = html.replace(/window\.muhurthamTarget = .*?;/, 
+        `window.muhurthamTarget = new Date("${isoTarget}").getTime();`
+      );
+
+      // 7. Event Details
+      html = html.replace(/(<span><strong>).*?(<\/strong><\/span>[\s\S]*?<span>⏰<\/span>[\s\S]*?<span>).*?(<\/span>[\s\S]*?<span>📍<\/span>[\s\S]*?<span>)[\s\S]*?(<\/span>)/,
+        `$1${data.eventDateFull}$2${data.eventTimings}$3\n            <strong>${data.venueName}</strong><br>\n            ${data.venueAddress}\n          $4`
+      );
+      html = html.replace(/(<a href=").*?(" target="_blank" class="map-link-btn">)/, `$1${data.venueMapsUrl}$2`);
+
+      // 8. Family Columns
+      html = html.replace(/(<strong>Groom's Parents:<\/strong><br>).*?(<br>[\s\S]*?<span style="font-size: 11px; color: #777;">).*?(<\/span>)/,
+        `$1${data.groomParents}$2${data.groomParentsAddr}$3`
+      );
+      html = html.replace(/(<strong>Bride's Parents:<\/strong><br>).*?(<br>[\s\S]*?<span style="font-size: 11px; color: #777;">).*?(<\/span>)/,
+        `$1${data.brideParents}$2${data.brideParentsAddr}$3`
+      );
+
+      // 9. Couple Photo (replace src if custom uploaded)
+      if (data.couplePhoto) {
+        html = html.replace(/src="wedding\.jpeg"/, `src="${data.couplePhoto}"`);
+      }
+
+      // 10. Hero banner background (if custom uploaded)
+      if (data.bannerPhoto) {
+        html = html.replace(/url\('reception\.jpeg'\)/, `url('${data.bannerPhoto}')`);
+      }
+
+      // 11. Theme Colors injection if custom theme selected
+      if (data.theme && THEMES[data.theme] && data.theme !== 'burgundy') {
+        const t = THEMES[data.theme];
+        const themeCssOverride = `
+    :root {
+      --deep-wine: ${t['--deep-wine']} !important;
+      --envelope-burgundy: ${t['--envelope-burgundy']} !important;
+      --gold-primary: ${t['--gold-primary']} !important;
+      --gold-glow: ${t['--gold-glow']} !important;
+      --maroon-accent: ${t['--maroon-accent']} !important;
+    }
+    .top-flap { background: linear-gradient(180deg, ${t['--envelope-grad-start']} 0%, ${t['--envelope-grad-end']} 100%) !important; }
+    `;
+        html = html.replace('</style>', `${themeCssOverride}\n  </style>`);
+      }
+
+      return html;
+    }
+
+    // Save Changes Handler
+    async function saveChanges() {
+      const dot = document.getElementById('statusDot');
+      const txt = document.getElementById('saveStatusText');
+      if (dot) dot.className = 'status-dot saving';
+      if (txt) txt.innerText = 'Saving changes...';
+      showToast('Saving changes...', '⏳');
+
+      const data = getFormData();
+      saveDraft(); // Persist to localStorage
+
+      try {
+        const html = await generateUpdatedHtml(data);
+        let serverSaved = false;
+
+        // Try direct save via server API if accessible
+        if (window.location.protocol.startsWith('http')) {
+          try {
+            const resp = await fetch('/api/save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ html, formData: data })
+            });
+            if (resp.ok) {
+              const resData = await resp.json();
+              if (resData.status === 'success') {
+                serverSaved = true;
+              }
+            }
+          } catch (netErr) {
+            console.warn('Backend save API note:', netErr);
+          }
+        }
+
+        if (serverSaved) {
+          markSaved('Saved directly to index.html');
+          showToast('Changes saved directly to index.html!', '💾');
+        } else {
+          markSaved('Saved to browser draft');
+          showToast('Changes saved! (Use Download HTML to export file)', '💾');
+        }
+      } catch (err) {
+        console.error('Save error:', err);
+        markSaved('Saved locally');
+        showToast('Saved locally in browser draft!', '✅');
+      }
+    }
+
+    // Attach Save Handlers
+    document.getElementById('btnSaveChanges').addEventListener('click', saveChanges);
+    const btnBottom = document.getElementById('btnSaveChangesBottom');
+    if (btnBottom) btnBottom.addEventListener('click', saveChanges);
+
+    // Keyboard Shortcut Ctrl+S / Cmd+S
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+        saveChanges();
+      }
+    });
+
+    // Download standalone index.html
+    document.getElementById('btnExportHtml').addEventListener('click', async () => {
+      try {
+        showToast('Preparing standalone index.html...', '⏳');
+        const data = getFormData();
+        const html = await generateUpdatedHtml(data);
+
+        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = 'index.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadUrl);
+
+        showToast('Downloaded standalone index.html!', '🎉');
+      } catch (err) {
+        console.error(err);
+        showToast('Download failed. Check console for details.', '⚠️');
+      }
+    });
+
+    // Initialize on Iframe Load
+    frame.addEventListener('load', () => {
+      loadDraft();
+      syncPreview();
+      isInitialized = true;
+      markSaved('All changes saved');
+    });
+  </script>
+</body>
+</html>
