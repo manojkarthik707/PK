@@ -751,36 +751,6 @@
       box-shadow: 0 4px 18px rgba(0,0,0,0.6);
       backdrop-filter: blur(8px);
     }
-
-    .editor-quick-btn {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      background: rgba(33, 2, 9, 0.88);
-      border: 1.5px solid var(--gold-primary);
-      color: var(--gold-glow);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding: 7px 14px;
-      border-radius: 20px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      z-index: 3000;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-      transition: all 0.25s ease;
-    }
-
-    .editor-quick-btn:hover {
-      background: var(--gold-primary);
-      color: #210209;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(223, 183, 88, 0.45);
-    }
   </style>
 </head>
 <body>
@@ -867,8 +837,7 @@
 
       <h2 class="section-title reveal-on-scroll">Subamuhurtham</h2>
       <p class="invitation-body reveal-on-scroll">
-        With the divine blessings of the Almighty and our parents, we cordially invite you and your family 
-        to grace the auspicious wedding ceremony and bless the couple as they begin their sacred journey together.
+        With the divine blessings of the Almighty and our parents, we cordially invite you and your family to grace the auspicious wedding ceremony and bless the couple as they begin their sacred journey together.
       </p>
 
       <!-- WEDDING MUHURTHAM COUNTDOWN -->
@@ -895,7 +864,7 @@
         </div>
         <div class="event-row">
           <span>⏰</span>
-          <span><strong>Reception:</strong> 7:00 AM – 10:00 AM<br><strong>Subamuhurtham:</strong> 8:00 AM – 9:00 AM</span>
+          <span><strong>Muhurtham:</strong> 7:00 AM – 9:00 AM</span>
         </div>
         <div class="event-row">
           <span>📍</span>
@@ -930,7 +899,6 @@
     <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-piano-112191.mp3" type="audio/mpeg">
   </audio>
 
-  <a href="editor.html" class="editor-quick-btn" id="editorQuickBtn" title="Customize Invitation in Studio">✏️ Edit</a>
   <div class="music-btn" id="musicToggle">♪</div>
 </div>
 
@@ -1028,7 +996,7 @@
   }
 
   /* Target: 17 September 2026, 07:00 AM IST */
-  window.muhurthamTarget = window.muhurthamTarget || new Date("2026-09-17T07:00:00+05:30").getTime();
+  window.muhurthamTarget = new Date("2026-09-17T07:00:00+05:30").getTime();
 
   function updateMuhurthamTimer() {
     const now = new Date().getTime();
@@ -1130,10 +1098,10 @@
       if (d.groomParents || d.brideParents) {
         const fCols = document.querySelectorAll('.family-column');
         if (fCols[0] && d.groomParents) {
-          fCols[0].innerHTML = `<strong>Groom's Parents:</strong><br>${d.groomParents}<br><span style="font-size: 11px; color: #777;">${d.groomParentsAddr || ''}</span>`;
+          fCols[0].innerHTML = `<strong>Groom's Parents:</strong><br>Mr. J. Kumaravel & Mrs. K. Tamilselvi<br><span style="font-size: 11px; color: #777;">Nethaji Avenue, LIC Colony, Coimbatore</span>`;
         }
         if (fCols[1] && d.brideParents) {
-          fCols[1].innerHTML = `<strong>Bride's Parents:</strong><br>${d.brideParents}<br><span style="font-size: 11px; color: #777;">${d.brideParentsAddr || ''}</span>`;
+          fCols[1].innerHTML = `<strong>Bride's Parents:</strong><br>Mr. K. Balasubramaniam & Mrs. B. Vijayalakshmi<br><span style="font-size: 11px; color: #777;">Vidhyalayam, Palladam Road, Tirupur</span>`;
         }
       }
     }
